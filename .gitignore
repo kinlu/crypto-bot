@@ -1,0 +1,26 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IntelliJ IDEA
+.idea/
+
+# macOS
+.DS_Store
+
+# Output files
+/significant_volume_tickers_*.json

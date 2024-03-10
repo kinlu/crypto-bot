@@ -1,0 +1,6 @@
+requests~=2.31.0
+pymongo==4.6.0
+discord
+pandas
+numpy
+matplotlib
