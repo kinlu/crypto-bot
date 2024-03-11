@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 from interface.discord_messager import send_discord_message
-from interface.finazon_processer import FinazonProcessor
+from interface.finazon_processor import FinazonProcessor
 from quantitative_algo.mfi_calculator import calculate_mfi
 from service.charting import plot_mfi_price_for_divergence
 
@@ -15,11 +15,6 @@ FINAZON_API_KEY = os.getenv('FINAZON_API_KEY')
 
 # Finazon Request configurations
 finazon_processor = FinazonProcessor(FINAZON_URL, FINAZON_API_KEY)
-finazon_processor.short_vibration_tolerance = float(
-    os.getenv('PRICE_TOLERANCE', 0.1))  # 10% of the opening price at the closing price
-finazon_processor.vol_multiplier = float(os.getenv('VOL_TOLERANCE', 8))  # 8 times the volume of the next day
-finazon_processor.back_date = int(os.getenv('BACK_DATE', 5))  # up to 5 days back
-finazon_processor.request_delay = int(os.getenv('REQUEST_DELAY', 2))  # default to 2 seconds for each request to finazon
 TIMESERIES_INTERVAL = os.getenv('TIMESERIES_INTERVAL', '1h')
 DATA_SET = os.getenv('DATA_SET', 'binance')
 SEND_TO_DISCORD = os.getenv('SEND_TO_DISCORD', False)
@@ -27,7 +22,7 @@ SEND_TO_DISCORD = os.getenv('SEND_TO_DISCORD', False)
 ticker = os.getenv('TICKER', 'BTC/USDT')
 
 print(f'Fetching time series for {ticker}')
-time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 90, 100, 0)
+time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 100, 100, 0)
 
 print('Calculating MFI')
 data = time_series['data']
