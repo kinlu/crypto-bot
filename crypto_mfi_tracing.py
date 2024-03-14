@@ -69,13 +69,57 @@ if SEND_TO_DISCORD:
             image_path='./mfi_closing_price.png'
         )
     )
-
-    if is_divergence_now:
-        print('There is a divergence between the MFI and the closing price.')
+    if is_divergence_now["buy_signal"]:
+        print('Conflicting signal: Buy signal detected')
         asyncio.run(
             send_discord_message(
                 token=os.getenv('DISCORD_BOT_TOKEN'),
                 channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
-                message=f':warning:  Divergence detected between MFI and Closing Price for {ticker}'
+                message=f':green_circle: Conflicting Signal: Buy signal detected {ticker}'
             )
         )
+    if is_divergence_now["sell_signal"]:
+        print('Buy/Sell signal: Sell signal detected')
+        asyncio.run(
+            send_discord_message(
+                token=os.getenv('DISCORD_BOT_TOKEN'),
+                channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
+                message=f':red_circle: Sell signal detected for {ticker}'
+            )
+        )
+    if is_divergence_now["bullish_divergence"]:
+        print('There is a bullish divergence between the MFI and the closing price.')
+        asyncio.run(
+            send_discord_message(
+                token=os.getenv('DISCORD_BOT_TOKEN'),
+                channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
+                message=f':green_circle: Bullish Divergence detected between MFI and Closing Price for {ticker}'
+            )
+        )
+        if is_divergence_now["sell_signal"]:
+            print('Conflicting signal: Sell signal detected during bullish divergence.')
+            asyncio.run(
+                send_discord_message(
+                    token=os.getenv('DISCORD_BOT_TOKEN'),
+                    channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
+                    message=f':warning: Conflicting Signal: Sell signal detected during bullish divergence for {ticker}'
+                )
+            )
+    if is_divergence_now["bearish_divergence"]:
+        print('There is a bearish divergence between the MFI and the closing price.')
+        asyncio.run(
+            send_discord_message(
+                token=os.getenv('DISCORD_BOT_TOKEN'),
+                channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
+                message=f':red_circle: Bearish Divergence detected between MFI and Closing Price for {ticker}'
+            )
+        )
+        if is_divergence_now["buy_signal"]:
+            print('Conflicting signal: Buy signal detected during bearish divergence.')
+            asyncio.run(
+                send_discord_message(
+                    token=os.getenv('DISCORD_BOT_TOKEN'),
+                    channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
+                    message=f':warning: Conflicting Signal: Buy signal detected during bearish divergence for {ticker}'
+                )
+            )

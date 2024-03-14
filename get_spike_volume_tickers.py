@@ -2,6 +2,8 @@ import asyncio
 from datetime import datetime, timedelta
 import json
 import os
+
+from common_function import make_ticker_string, get_all_tickers
 from interface.discord_messager import send_discord_message
 
 from persistence.db_manager import DBManager
@@ -26,22 +28,6 @@ db_manager = DBManager(os.getenv('DB_URL'))
 # Discord configurations
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))  # Make sure to convert CHANNEL_ID to an integer
-
-
-def get_all_tickers(record):
-    tickers = []
-    if not record:
-        return tickers
-    for item in record['spike_vol_tickers']['result']:
-        tickers.append(item['ticker'])
-    return tickers
-
-
-def make_ticker_string(ticker_name):
-    ticker_name = ticker_name.replace('/', '_')
-    ticker_link = f'https://www.gate.io/zh/trade/{ticker_name}'
-    ticker_string = f'[{ticker_name}]({ticker_link})'
-    return ticker_string
 
 
 # Function to send message
