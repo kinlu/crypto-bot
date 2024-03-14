@@ -70,12 +70,12 @@ if SEND_TO_DISCORD:
         )
     )
     if is_divergence_now["buy_signal"]:
-        print('Conflicting signal: Buy signal detected')
+        print('Buy/Sell signal: Buy signal detected')
         asyncio.run(
             send_discord_message(
                 token=os.getenv('DISCORD_BOT_TOKEN'),
                 channel_id=int(os.getenv('DISCORD_CHANNEL_ID')),
-                message=f':green_circle: Conflicting Signal: Buy signal detected {ticker}'
+                message=f':green_circle: Buy signal detected for {ticker}'
             )
         )
     if is_divergence_now["sell_signal"]:
