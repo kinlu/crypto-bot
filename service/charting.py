@@ -3,7 +3,12 @@ import numpy as np
 from matplotlib.patches import Patch
 
 
-def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_file_path, sma_low=8, sma_high=13):
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Patch
+
+
+def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_file_path, mfi_sma_period=13, sma_low=8, sma_high=13):
     """
     Plots MFI and closing price on a chart and saves the plot to a file.
 
@@ -13,15 +18,18 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
     :param title: The chart title.
     :param xlabel: The x-axis label.
     :param plot_file_path: The path where the plot image will be saved.
-    :param sma_low: The period for the lower SMA (default is 8).
-    :param sma_high: The period for the higher SMA (default is 13).
+    :param mfi_sma_period: The period for the MFI SMA (default is 13).
+    :param sma_low: The period for the lower Price SMA (default is 8).
+    :param sma_high: The period for the higher Price SMA (default is 13).
     :return: True if most recently there is a divergence between MFI and closing price, False otherwise.
     """
 
     alpha = 0.5
 
-    # Calculate SMA_Low for MFI and Price
-    mfi_sma_low = np.convolve(mfi, np.ones(sma_low)/sma_low, mode='valid')
+    # Calculate SMA for MFI
+    mfi_sma = np.convolve(mfi, np.ones(mfi_sma_period)/mfi_sma_period, mode='valid')
+
+    # Calculate SMA_Low for Price
     price_sma_low = np.convolve(closing_price, np.ones(sma_low)/sma_low, mode='valid')
 
     # Calculate SMA_High for Price
@@ -31,7 +39,7 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
 
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel("MFI", color="blue")
-    ax1.plot(x[sma_low-1:], mfi_sma_low, label=f"MFI SMA_{sma_low}", color="blue", zorder=1)  # Plot MFI SMA_Low
+    ax1.plot(x[mfi_sma_period-1:], mfi_sma, label=f"MFI SMA_{mfi_sma_period}", color="blue", zorder=1)  # Plot MFI SMA
     ax1.tick_params(axis='y', labelcolor="blue")
     ax1.set_ylim(0, 100)  # Set fixed label from 0 to 100 for MFI
     ax1.axhline(50, color='black', linewidth=2)  # Add a bold line at 50 for highlight
@@ -53,27 +61,32 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
     price_min, price_max = min(closing_price), max(closing_price)
     ax2.set_ylim(price_min - 0.1 * (price_max - price_min), price_max + 0.1 * (price_max - price_min))
 
-    # Calculate differences between consecutive MFI SMA_Low and closing_price SMA_Low values
-    mfi_sma_low_diff = np.diff(mfi_sma_low)
-    price_sma_low_diff = np.diff(price_sma_low)
+    # Align mfi_sma and price_sma_low arrays
+    aligned_length = min(len(mfi_sma), len(price_sma_low))
+    mfi_sma_aligned = mfi_sma[-aligned_length:]
+    price_sma_low_aligned = price_sma_low[-aligned_length:]
+
+    # Calculate differences between consecutive MFI SMA and closing_price SMA_Low values
+    mfi_sma_diff = np.diff(mfi_sma_aligned)
+    price_sma_low_diff = np.diff(price_sma_low_aligned)
 
     # Extend the differences by one element to align with x values
-    mfi_sma_low_diff = np.insert(mfi_sma_low_diff, 0, 0)
+    mfi_sma_diff = np.insert(mfi_sma_diff, 0, 0)
     price_sma_low_diff = np.insert(price_sma_low_diff, 0, 0)
 
     # Calculate the average price
-    avg_price = np.mean(closing_price)
+    avg_price = np.mean(closing_price[-aligned_length:])
 
-    # Find indices where MFI SMA_Low is increasing, closing_price SMA_Low is decreasing, and price is below average
-    bullish_diverging = (mfi_sma_low_diff > 0) & (price_sma_low_diff < 0) & (price_sma_low < avg_price)
-    # Find indices where MFI SMA_Low is decreasing, closing_price SMA_Low is increasing, and price is above average
-    bearish_diverging = (mfi_sma_low_diff < 0) & (price_sma_low_diff > 0) & (price_sma_low > avg_price)
+    # Find indices where MFI SMA is increasing, closing_price SMA_Low is decreasing, and price is below average
+    bullish_diverging = (mfi_sma_diff > 0) & (price_sma_low_diff < 0) & (price_sma_low_aligned < avg_price)
+    # Find indices where MFI SMA is decreasing, closing_price SMA_Low is increasing, and price is above average
+    bearish_diverging = (mfi_sma_diff < 0) & (price_sma_low_diff > 0) & (price_sma_low_aligned > avg_price)
     diverging = bullish_diverging | bearish_diverging
 
     # Highlight divergence
-    plt.fill_between(x[sma_low-1:], mfi_sma_low, price_sma_low, where=bullish_diverging, color="green", alpha=alpha, interpolate=True,
+    plt.fill_between(x[-aligned_length:], mfi_sma_aligned, price_sma_low_aligned, where=bullish_diverging, color="green", alpha=alpha, interpolate=True,
                      zorder=3)
-    plt.fill_between(x[sma_low-1:], mfi_sma_low, price_sma_low, where=bearish_diverging, color="red", alpha=alpha, interpolate=True,
+    plt.fill_between(x[-aligned_length:], mfi_sma_aligned, price_sma_low_aligned, where=bearish_diverging, color="red", alpha=alpha, interpolate=True,
                      zorder=3)
 
     # Align price_sma_low and price_sma_high arrays
@@ -99,7 +112,7 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
 
     # Create legends
     legend_patches = [
-        plt.Line2D([0], [0], color="blue", lw=2, label=f"MFI SMA_{sma_low}"),
+        plt.Line2D([0], [0], color="blue", lw=2, label=f"MFI SMA_{mfi_sma_period}"),
         plt.Line2D([0], [0], color="red", lw=2, label=f"Price SMA_{sma_low}"),
         plt.Line2D([0], [0], color="orange", lw=2, label=f"Price SMA_{sma_high}"),
         Patch(facecolor="green", edgecolor='black', label='Bullish Divergence'),
@@ -125,7 +138,6 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
     }
 
     return result
-
 
 def detect_bullish_divergence_with_mfi(x, mfi, closing_price, title, xlabel, plot_file_path):
     """
