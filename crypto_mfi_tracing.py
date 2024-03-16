@@ -22,7 +22,7 @@ SEND_TO_DISCORD = os.getenv('SEND_TO_DISCORD', False)
 ticker = os.getenv('TICKER', 'BTC/USDT')
 
 print(f'Fetching time series for {ticker}')
-time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 100, 100, 0)
+time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 150, 0)
 
 print('Calculating MFI')
 data = time_series['data']

@@ -23,7 +23,7 @@ with open('resource/tickers_list.json', 'r') as file:
 
 for ticker in tickers_list:
     print(f'Fetching time series for {ticker}')
-    time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 100, 100, 2)
+    time_series = finazon_processor.fetch_time_series(DATA_SET, ticker, TIMESERIES_INTERVAL, 100, 2)
 
     if not time_series['data']:
         print(f'No time series available for {ticker}')
