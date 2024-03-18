@@ -78,10 +78,10 @@ def plot_mfi_price_for_divergence(x, mfi, closing_price, title, xlabel, plot_fil
     avg_price = np.mean(closing_price[-aligned_length:])
 
     # Find indices where MFI SMA is increasing, closing_price SMA_Low is decreasing, and price is below average
-    bullish_diverging = (mfi_sma_diff > 0) & (price_sma_low_diff < 0) & (price_sma_low_aligned < avg_price)
+    bullish_diverging = (mfi_sma_diff > 0) & (price_sma_low_diff < 0)
+
     # Find indices where MFI SMA is decreasing, closing_price SMA_Low is increasing, and price is above average
-    bearish_diverging = (mfi_sma_diff < 0) & (price_sma_low_diff > 0) & (price_sma_low_aligned > avg_price)
-    diverging = bullish_diverging | bearish_diverging
+    bearish_diverging = (mfi_sma_diff < 0) & (price_sma_low_diff > 0)
 
     # Highlight divergence
     plt.fill_between(x[-aligned_length:], mfi_sma_aligned, price_sma_low_aligned, where=bullish_diverging, color="green", alpha=alpha, interpolate=True,
