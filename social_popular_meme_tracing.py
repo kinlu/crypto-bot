@@ -1,8 +1,8 @@
 import asyncio
 import os
 from prettytable import PrettyTable
-from discord_messager import send_discord_message
-from lunarcrush_processor import LunarCrushProcessor
+from interface.discord_messager import send_discord_message
+from interface.lunarcrush_processor import LunarCrushProcessor
 
 lunarcrush_api_key = os.getenv('LUNARCRUSH_API_KEY')
 discord_bot_token = os.getenv('DISCORD_BOT_TOKEN')
