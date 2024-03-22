@@ -4,3 +4,4 @@ discord
 pandas
 numpy
 matplotlib
+prettytable
