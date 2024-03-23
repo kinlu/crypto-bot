@@ -39,6 +39,20 @@ def get_rank_str(coin, rank_key):
     return f"{rank} {rank_arrow} {abs(rank_change) if rank_change != 'N/A' else ''}"
 
 
+async def send_message_with_retry(message):
+    max_retries = 3
+    retry_delay = 5  # seconds
+
+    for attempt in range(max_retries):
+        try:
+            await asyncio.wait_for(send_discord_message(discord_bot_token, discord_channel_id, message=message), timeout=10)
+            break
+        except asyncio.TimeoutError:
+            if attempt == max_retries - 1:
+                raise
+            print(f"Timeout occurred. Retrying in {retry_delay} seconds... (Attempt {attempt + 1})")
+            await asyncio.sleep(retry_delay)
+
 print("Fetching meme coins...")
 processor = LunarCrushProcessor(lunarcrush_api_key)
 data = processor.get_top_coins(sort="alt_rank")
@@ -68,6 +82,6 @@ message1 = (f"Found {len(meme_coins)} tokens related to 'meme' with current AltR
 message2 = f"Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):\n```\n{table2}\n```"
 
 print("Message 1")
-asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, message=message1))
+asyncio.run(send_message_with_retry(message1))
 print("Message 2")
-asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, message=message2))
+asyncio.run(send_message_with_retry(message2))
