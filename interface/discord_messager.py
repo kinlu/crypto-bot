@@ -32,5 +32,9 @@ class DiscordMessager(discord.Client):
 async def send_discord_message(token, channel_id, message='Hello, Discord!', image_path=None):
     intents = discord.Intents.default()
     client = DiscordMessager(channel_id, message, image_path, intents=intents)
-    await client.start(token)
+
+    async with client:
+        await client.start(token)
+        await client.wait_until_ready()
+        await client.close()
 

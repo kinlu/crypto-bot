@@ -77,11 +77,16 @@ table1 = create_table(meme_coins)
 table2 = create_table(new_meme_coins)
 
 print("Sending messages to Discord...")
-message1 = (f"Found {len(meme_coins)} tokens related to 'meme' with current AltRank in top 100 (sorted by AltRank "
-            f"ascending):\n```\n{table1}\n```\n")
-message2 = f"Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):\n```\n{table2}\n```"
+message1 = f"Found {len(meme_coins)} tokens related to 'meme' with current AltRank in top 100 (sorted by AltRank ascending):"
+message2 = f"```\n{table1}\n```"
+message3 = f"Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):"
+message4 = f"```\n{table2}\n```"
 
 print("Message 1")
 asyncio.run(send_message_with_retry(message1))
 print("Message 2")
 asyncio.run(send_message_with_retry(message2))
+print("Message 3")
+asyncio.run(send_message_with_retry(message3))
+print("Message 4")
+asyncio.run(send_message_with_retry(message4))
