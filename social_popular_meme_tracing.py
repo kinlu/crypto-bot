@@ -39,6 +39,7 @@ def get_rank_str(coin, rank_key):
     return f"{rank} {rank_arrow} {abs(rank_change) if rank_change != 'N/A' else ''}"
 
 
+print("Fetching meme coins...")
 processor = LunarCrushProcessor(lunarcrush_api_key)
 data = processor.get_top_coins(sort="alt_rank")
 
@@ -53,15 +54,20 @@ new_meme_coins = [
 ]
 
 # 按照AltRank从小到大排序
+print("Sorting meme coins...")
 meme_coins = sorted(meme_coins, key=lambda coin: coin.get('alt_rank', float('inf')))
 new_meme_coins = sorted(new_meme_coins, key=lambda coin: coin.get('alt_rank', float('inf')))
 
+print("Creating tables...")
 table1 = create_table(meme_coins)
 table2 = create_table(new_meme_coins)
 
+print("Sending messages to Discord...")
 message1 = (f"Found {len(meme_coins)} tokens related to 'meme' with current AltRank in top 100 (sorted by AltRank "
             f"ascending):\n```\n{table1}\n```\n")
 message2 = f"Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):\n```\n{table2}\n```"
 
+print("Message 1")
 asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, message=message1))
+print("Message 2")
 asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, message=message2))
