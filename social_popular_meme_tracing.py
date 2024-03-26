@@ -77,9 +77,9 @@ messages_meme_coins = create_message_list(meme_coins)
 messages_new_meme_coins = create_message_list(new_meme_coins)
 
 print("Sending messages to Discord...")
-message1 = f"Found {len(meme_coins)} tokens related to 'meme' with current AltRank in top 100 (sorted by AltRank ascending):"
+message1 = f"```diff\n+ Found {len(meme_coins)} tokens related to 'meme' with current AltRank in top 100 (sorted by AltRank ascending):\n```"
 message2 = messages_meme_coins
-message3 = f"Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):"
+message3 = f"```diff\n+ Among them, {len(new_meme_coins)} tokens are new to the top 100 (sorted by AltRank ascending):\n```"
 message4 = messages_new_meme_coins
 
 print("Message 1")
