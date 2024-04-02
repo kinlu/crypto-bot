@@ -7,3 +7,4 @@ matplotlib
 rich-dataframe
 flask
 flask_apscheduler
+scikit-learn
