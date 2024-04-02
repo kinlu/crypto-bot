@@ -4,4 +4,6 @@ discord
 pandas
 numpy
 matplotlib
-prettytable
+rich-dataframe
+flask
+flask_apscheduler

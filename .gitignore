@@ -24,3 +24,4 @@ ENV/
 
 # Output files
 /significant_volume_tickers_*.json
+*.html
