@@ -13,9 +13,9 @@ scheduler.init_app(app)
 scheduler.start()
 
 
-@scheduler.task('interval', id='fetch_meme_coins', seconds=30)
+@scheduler.task('interval', id='fetch_meme_coins', minutes=30)
 def scheduled_coin_job():
-    print("Scheduler triggered every 30 seconds")
+    print("Scheduler triggered every 30 minutes...")
     report_coins(lunarcrush_api_key)
 
 
