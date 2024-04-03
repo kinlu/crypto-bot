@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, render_template_string
 from flask_apscheduler import APScheduler
 from new_meme_tracing import report_coins
@@ -13,35 +15,50 @@ scheduler.init_app(app)
 scheduler.start()
 
 
-@scheduler.task('interval', id='fetch_meme_coins', minutes=30)
 def scheduled_coin_job():
-    print("Scheduler triggered every 30 minutes...")
+    print("Scheduler triggered...")
+
+    # Clean up the files in the "htmls" folder
+    print("Cleaning up HTML files...")
+    html_directory = 'htmls'
+    for filename in os.listdir(html_directory):
+        if filename.startswith('coins_') and filename.endswith('.html'):
+            file_path = os.path.join(html_directory, filename)
+            os.remove(file_path)
+    print("Regenerating HTML files...")
     report_coins(lunarcrush_api_key)
+
+
+# Schedule the job to run immediately and then every 30 minutes
+scheduler.add_job(id='fetch_coins', func=scheduled_coin_job, trigger='interval', minutes=30, next_run_time=datetime.now())
 
 
 @app.route('/')
 def index():
-    with open('meme_coins.html', 'r') as f:
-        meme_coins_html = f.read()
+    html_content = '<h1>Coin Categories</h1>'
 
-    with open('new_meme_coins.html', 'r') as f:
-        new_meme_coins_html = f.read()
+    # Specify the directory path for the HTML files
+    html_directory = 'htmls'
 
-    html_content = f'''
-        <h1>Meme Coins</h1>
-        <div>
-            <h2>All Meme Coins</h2>
-            {meme_coins_html}
-        </div>
-        <hr>
-        <div>
-            <h2>New Meme Coins</h2>
-            {new_meme_coins_html}
-        </div>
-    '''
+    # Iterate over all HTML files in the specified directory
+    for filename in os.listdir(html_directory):
+        if filename.startswith('coins_') and filename.endswith('.html'):
+            file_path = os.path.join(html_directory, filename)
+            with open(file_path, 'r') as f:
+                category_html = f.read()
+
+            category_name = filename[6:-5].capitalize()  # Extract the category name from the filename
+
+            html_content += f'''
+                <div>
+                    <h2>{category_name} Coins</h2>
+                    {category_html}
+                </div>
+                <hr>
+            '''
 
     return render_template_string(html_content)
 
 
-if __name__== '__main__':
+if __name__ == '__main__':
     app.run(host="0.0.0.0", port=os.getenv("PORT", default=5000))
