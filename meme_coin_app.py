@@ -1,11 +1,17 @@
+import asyncio
 from datetime import datetime
 
 from flask import Flask, render_template_string
 from flask_apscheduler import APScheduler
+
+from discord_messager import send_discord_message
 from new_meme_tracing import report_coins
 import os
 
 lunarcrush_api_key = os.getenv('LUNARCRUSH_API_KEY')
+discord_bot_token = os.getenv('DISCORD_BOT_TOKEN')
+discord_channel_id = int(os.getenv('DISCORD_CHANNEL_ID'))
+railway_public_domain = os.getenv('RAILWAY_PUBLIC_DOMAIN')
 
 app = Flask(__name__)
 
@@ -26,7 +32,9 @@ def scheduled_coin_job():
             file_path = os.path.join(html_directory, filename)
             os.remove(file_path)
     print("Regenerating HTML files...")
-    report_coins(lunarcrush_api_key)
+    report_coins(lunarcrush_api_key, discord_bot_token, discord_channel_id)
+    message = f"For detail, visit https://{railway_public_domain}/"
+    asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, message))
 
 
 # Schedule the job to run immediately and then every 30 minutes

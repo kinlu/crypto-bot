@@ -1,4 +1,8 @@
+import asyncio
+
 import pandas as pd
+
+from discord_messager import send_discord_message
 from interface.lunarcrush_processor import LunarCrushProcessor
 from rich.console import Console
 from rich.table import Table
@@ -71,7 +75,7 @@ def create_rich_table(df, title):
     return table
 
 
-def report_coins(lunarcrush_api_key):
+def report_coins(lunarcrush_api_key, discord_bot_token, discord_channel_id):
     print("Fetching coins...")
     processor = LunarCrushProcessor(lunarcrush_api_key)
     data = processor.get_top_coins(sort="alt_rank")
@@ -93,5 +97,11 @@ def report_coins(lunarcrush_api_key):
         html_category_coins = console.export_html(inline_styles=True)
         with open(f"./htmls/coins_{category}.html", "w") as f:
             f.write(html_category_coins)
+
+        discord_message = f"**{category_coins_df['symbol'].count()} {category.capitalize()} Tokens**: "
+        symbols = category_coins_df['symbol'].tolist()
+        discord_message += ", ".join(symbols)
+
+        asyncio.run(send_discord_message(discord_bot_token, discord_channel_id, discord_message))
 
     print("HTML files generated.")
