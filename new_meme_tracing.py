@@ -2,7 +2,7 @@ import asyncio
 
 import pandas as pd
 
-from discord_messager import send_discord_message
+from interface.discord_messager import send_discord_message
 from interface.lunarcrush_processor import LunarCrushProcessor
 from rich.console import Console
 from rich.table import Table
