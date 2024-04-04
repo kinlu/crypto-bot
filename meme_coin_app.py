@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, render_template_string
 from flask_apscheduler import APScheduler
 
-from discord_messager import send_discord_message
+from interface.discord_messager import send_discord_message
 from new_meme_tracing import report_coins
 import os
 
