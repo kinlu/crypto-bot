@@ -7,7 +7,7 @@ class FinazonProcessor:
         self.base_url = base_url
         self.headers = {"Authorization": f"apikey {api_key}"}
 
-    def fetch_time_series(self, dataset, ticker, interval, page_size, request_delay = 0):
+    def fetch_time_series(self, dataset, ticker, interval, page_size, request_delay=0):
 
         querystring = {"dataset": dataset, "ticker": ticker, "interval": interval,
                        "page_size": page_size}

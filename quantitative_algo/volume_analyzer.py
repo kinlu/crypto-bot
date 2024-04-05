@@ -19,7 +19,7 @@ def get_significant_volumes(processor: FinazonProcessor, tickers_list, short_vib
 
     for ticker in tickers_list:
         print(f'Fetching volume data for {ticker}')
-        volume_data = processor.fetch_time_series("gate", ticker, "1d", back_date, 15, 2)
+        volume_data = processor.fetch_time_series("gate", ticker, "1d", 150, 2)
         spike_volumes_with_small_vibration = []
         spike_volumes_with_large_vibration = []
 
