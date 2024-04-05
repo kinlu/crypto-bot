@@ -1,5 +1,5 @@
 from datetime import datetime
-from finazon_processor import FinazonProcessor
+from interface.finazon_processor import FinazonProcessor
 
 
 def is_within_short_vibration_tolerance(closing, opening, tolerance):
