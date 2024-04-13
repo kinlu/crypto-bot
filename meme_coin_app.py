@@ -38,7 +38,7 @@ def scheduled_coin_job():
 
 
 # Schedule the job to run immediately and then every 30 minutes
-scheduler.add_job(id='fetch_coins', func=scheduled_coin_job, trigger='interval', minutes=30, next_run_time=datetime.now())
+scheduler.add_job(id='fetch_coins', func=scheduled_coin_job, trigger='interval', minutes=60, next_run_time=datetime.now())
 
 
 @app.route('/')
